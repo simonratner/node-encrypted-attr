@@ -8,19 +8,17 @@ Encrypted model attributes in your favourite ORM.
 
 # Security model
 
-* AES-256-GCM
-* 96-bit random nonce
-* 128-bit authentication tag
+* AES-256-GCM:
+    * 96-bit random nonce
+    * 128-bit authentication tag
 * Additional authenticated data:
-    * Key id, allowing use of different keys for different attributes, or
-      rotating keys over time without re-encrypting all data
-    * [*Optional*] Object id, allowing to detect substitutions of encrypted
-      values
+    * Key id: use different keys for different attributes (or different users),
+      rotate keys over time without re-encrypting all data
+    * Object id: prevent substitution of encrypted values
 
 All keys should be 32 bytes long, and cryptographically random. Manage these
 keys as you would any other credentials (environment config, keychain, vault).
-
-Best way to generate keys:
+Generate keys with:
 ```
 node -p "require('crypto').randomBytes(32).toString('base64')"
 ```
@@ -37,9 +35,9 @@ specific scenarios:
     * Query injection via unsanitized input
 
 Specifically, this does *not* provide any protection in cases of a compromised
-web app host, app-level vulnerabilities, or accidental leaks into persistent
-logs. It is also in no way a substitute for actually encrypting your backups,
-sanitizing all you input, et cetera.
+app host, app-level vulnerabilities, or accidentally leaking sensitive data
+into logs. It is also not a substitute for actually encrypting your backups,
+sanitizing your input, et cetera.
 
 # Install
 
@@ -50,13 +48,12 @@ npm install node-encrypted-attr
 # Use
 
 While this module can be used stand-alone to encrypt individual values (see
-[tests](/test/)), it is designed to be wrapped in a plugin or hook for your
-favourite ORM. Eventually, this package may include such plugins for common
-ORMs, but for now, here's an example of integrating with [thinky](https://github.com/neumino/thinky):
+[tests](/test/encrypted-attr.spec.js)), it is designed to be wrapped into a
+plugin or hook for your favourite ORM. Eventually, this package may include
+such plugins for common ORMs, but for now, here's an example of integrating
+with [thinky](https://github.com/neumino/thinky):
 
-## Thinky
-
-```
+```js
 const EncryptedAttributes = require('node-encrypted-attr')
 const thinky = require('thinky')()
 const _ = require('lodash')
@@ -67,23 +64,24 @@ Model.encryptedAttributes = EncryptedAttributes(['secret'], {
   keys: {
     k1: 'bocZRaBnmtHb2pXGTGixiQb9W2MmOtRBpbJn3ADX0cU='
   },
-  keyId: 'k1'
+  keyId: 'k1',
+  verifyId: true
 })
 
-// Pre-save hook: encrypt any model attributes that need to be encrypted.
+// Pre-save hook: encrypt model attributes that need to be encrypted.
 Model.pre('save', function (next) {
   try {
-    this.encryptedAttributes.encryptAll(obj)
+    this.encryptedAttributes.encryptAll(this)
     process.nextTick(next)
   } catch (err) {
     process.nextTick(next, err)
   }
 })
 
-// Post-save hook: decrypt any model attributes that need to be decrypted.
+// Post-save hook: decrypt model attributes that need to be decrypted.
 Model.post('save', function (next) {
   try {
-    this.encryptedAttributes.decryptAll(obj)
+    this.encryptedAttributes.decryptAll(this)
     process.nextTick(next)
   } catch (err) {
     process.nextTick(next, err)
@@ -93,17 +91,17 @@ Model.post('save', function (next) {
 // Post-retrieve hook: ditto.
 Model.post('retrieve', function (next) {
   try {
-    this.encryptedAttributes.decryptAll(obj)
+    this.encryptedAttributes.decryptAll(this)
     process.nextTick(next)
   } catch (err) {
     process.nextTick(next, err)
   }
 })
 
-// Optionally, add some helper methods in case you need to set or read a value
-// directly, without going through model parser.
+// Optionally, add some helpers in case we need to set or read the value
+// directly (such as an update query), without going through model hooks.
 for (let attr of Model.encryptedAttributes.attributes) {
-  Mode.define(_.camelCase(`encrypted ${attr}`), function (val) {
+  Model.define(_.camelCase(`encrypted ${attr}`), function (val) {
     return Model.encryptedAttributes.encryptAttribute(this, val)
   }
 }
