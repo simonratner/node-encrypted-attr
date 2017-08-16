@@ -1,6 +1,6 @@
 {
   "name": "encrypted-attr",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Encrypted model attributes in your favourite ORM.",
   "author": "Simon Ratner (https://github.com/simonratner)",
   "keywords": [
@@ -12,7 +12,6 @@
     "orm"
   ],
   "dependencies": {
-    "es6-error": "^4.0.2",
     "lodash": "^4.17.4",
     "node-aes-gcm": "^0.2.2"
   },
