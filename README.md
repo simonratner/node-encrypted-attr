@@ -60,7 +60,7 @@ const _ = require('lodash')
 
 let Model = thinky.createModel('Model', {})
 
-Model.encryptedAttributes = EncryptedAttributes(['secret'], {
+Model.encryptedAttributes = EncryptedAttributes(['secret', 'nested.secret'], {
   keys: {
     k1: crypto.randomBytes(32).toString('base64') // use an actual key here
   },
@@ -104,6 +104,40 @@ for (let attr of Model.encryptedAttributes.attributes) {
   Model.define(_.camelCase(`encrypted ${attr}`), function (val) {
     return Model.encryptedAttributes.encryptAttribute(this, val)
   })
+}
+```
+
+And a usage example:
+
+```js
+async function storeSomeSecrets (doc) {
+  await doc.merge({
+    secret: 'red',
+    nested: {
+      hint: 'colour',
+      secret: 'yellow'
+    }
+  }).save()
+
+  console.log(await Model.get(1))
+  // {
+  //   id: '543bed92-e241-4151-9d8f-1aa942c36d24',
+  //   nested: {
+  //     hint: 'colour',
+  //     secret: 'yellow'
+  //   },
+  //   secret: 'red'
+  // }
+
+  console.log(await Model.get(1).execute())
+  // {
+  //   id: '543bed92-e241-4151-9d8f-1aa942c36d24',
+  //   nested: {
+  //     hint: 'colour',
+  //     secret: 'YWVzLTI1Ni1nY20kMSQwMQ==$JvDvLhZ1GlqYgCXx$wQCLkW7u$kt5To2YBdG5USLmtBTHS+g'
+  //   },
+  //   secret: 'YWVzLTI1Ni1nY20kMSQwMQ==$0n/ZpuUUIHRzAX5H$jbUS$bFRZOEe3mBrnWVQX6DMA3g'
+  // }
 }
 ```
 
