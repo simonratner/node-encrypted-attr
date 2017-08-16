@@ -1,0 +1,36 @@
+{
+  "name": "encrypted-attr",
+  "version": "1.0.0",
+  "description": "Encrypted model attribute implementation that can be easily plugged into your favourite ORM.",
+  "author": "Simon Ratner (https://github.com/simonratner)",
+  "keywords": [
+    "attr_encrypted",
+    "encrypted",
+    "attribute",
+    "property",
+    "model",
+    "orm"
+  ],
+  "dependencies": {
+    "es6-error": "^4.0.2",
+    "lodash": "^4.17.4",
+    "node-aes-gcm": "^0.2.2"
+  },
+  "optionalDependencies": {},
+  "devDependencies": {
+    "mocha": "^3.5.0",
+    "mocha-standard": "^1.0.0",
+    "standard": "^10.0.3",
+    "unexpected": "^10.33.2"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha -R spec --recursive"
+  },
+  "homepage": "https://github.com/simonratner/node-encrypted-attr",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/simonratner/node-encrypted-attr.git"
+  },
+  "bugs": "https://github.com/simonratner/node-encrypted-attr/issues",
+  "license": "MIT"
+}
