@@ -1,7 +1,7 @@
-# node-encrypted-attr
+# encrypted-attr
 
 [![travis](http://img.shields.io/travis/simonratner/node-encrypted-attr/master.svg?style=flat-square)](https://travis-ci.org/simonratner/node-encrypted-attr) &nbsp;
-[![npm](http://img.shields.io/npm/v/node-encrypted-attr.svg?style=flat-square)](https://www.npmjs.org/package/node-encrypted-attr) &nbsp;
+[![npm](http://img.shields.io/npm/v/encrypted-attr.svg?style=flat-square)](https://www.npmjs.org/package/encrypted-attr) &nbsp;
 [![license](https://img.shields.io/github/license/simonratner/node-encrypted-attr.svg?style=flat-square)](LICENSE)
 
 Encrypted model attributes in your favourite ORM.
@@ -42,7 +42,7 @@ sanitizing your input, et cetera.
 # Install
 
 ```
-npm install node-encrypted-attr
+npm install encrypted-attr
 ```
 
 # Use
@@ -54,7 +54,7 @@ such plugins for common ORMs, but for now, here's an example of integrating
 with [thinky](https://github.com/neumino/thinky):
 
 ```js
-const EncryptedAttributes = require('node-encrypted-attr')
+const EncryptedAttributes = require('encrypted-attr')
 const thinky = require('thinky')()
 const _ = require('lodash')
 

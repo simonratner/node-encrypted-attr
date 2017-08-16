@@ -1,7 +1,7 @@
 {
   "name": "encrypted-attr",
-  "version": "1.0.0",
-  "description": "Encrypted model attribute implementation that can be easily plugged into your favourite ORM.",
+  "version": "1.0.1",
+  "description": "Encrypted model attributes in your favourite ORM.",
   "author": "Simon Ratner (https://github.com/simonratner)",
   "keywords": [
     "attr_encrypted",
