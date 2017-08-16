@@ -71,7 +71,7 @@ Model.encryptedAttributes = EncryptedAttributes(['secret'], {
 // Pre-save hook: encrypt model attributes that need to be encrypted.
 Model.pre('save', function (next) {
   try {
-    this.encryptedAttributes.encryptAll(this)
+    Model.encryptedAttributes.encryptAll(this)
     process.nextTick(next)
   } catch (err) {
     process.nextTick(next, err)
@@ -81,7 +81,7 @@ Model.pre('save', function (next) {
 // Post-save hook: decrypt model attributes that need to be decrypted.
 Model.post('save', function (next) {
   try {
-    this.encryptedAttributes.decryptAll(this)
+    Model.encryptedAttributes.decryptAll(this)
     process.nextTick(next)
   } catch (err) {
     process.nextTick(next, err)
@@ -91,7 +91,7 @@ Model.post('save', function (next) {
 // Post-retrieve hook: ditto.
 Model.post('retrieve', function (next) {
   try {
-    this.encryptedAttributes.decryptAll(this)
+    Model.encryptedAttributes.decryptAll(this)
     process.nextTick(next)
   } catch (err) {
     process.nextTick(next, err)
@@ -103,7 +103,7 @@ Model.post('retrieve', function (next) {
 for (let attr of Model.encryptedAttributes.attributes) {
   Model.define(_.camelCase(`encrypted ${attr}`), function (val) {
     return Model.encryptedAttributes.encryptAttribute(this, val)
-  }
+  })
 }
 ```
 
