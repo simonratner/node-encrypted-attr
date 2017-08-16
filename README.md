@@ -1,7 +1,10 @@
-# Encrypted Attributes
+# node-encrypted-attr
 
-Encrypted model attribute implementation that can be easily plugged into your
-favourite ORM.
+[![travis](http://img.shields.io/travis/simonratner/node-encrypted-attr/master.svg?style=flat-square)](https://travis-ci.org/simonratner/node-encrypted-attr) &nbsp;
+[![npm](http://img.shields.io/npm/v/node-encrypted-attr.svg?style=flat-square)](https://www.npmjs.org/package/node-encrypted-attr) &nbsp;
+[![license](https://img.shields.io/github/license/simonratner/node-encrypted-attr.svg?style=flat-square)](LICENSE)
+
+Encrypted model attributes in your favourite ORM.
 
 # Security model
 
