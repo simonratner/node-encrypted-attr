@@ -62,7 +62,7 @@ let Model = thinky.createModel('Model', {})
 
 Model.encryptedAttributes = EncryptedAttributes(['secret'], {
   keys: {
-    k1: 'bocZRaBnmtHb2pXGTGixiQb9W2MmOtRBpbJn3ADX0cU='
+    k1: crypto.randomBytes(32).toString('base64') // use an actual key here
   },
   keyId: 'k1',
   verifyId: true
