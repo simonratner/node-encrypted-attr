@@ -3,6 +3,9 @@
   "version": "1.0.3",
   "description": "Encrypted model attributes in your favourite ORM.",
   "author": "Simon Ratner (https://github.com/simonratner)",
+  "engines": {
+    "node": ">=6.0"
+  },
   "keywords": [
     "attr_encrypted",
     "encrypted",
