@@ -40,6 +40,13 @@ describe('encrypted attributes', function () {
     expect(obj.secret.dataLength, 'to equal', 5)
   })
 
+  it('should not create missing nested attributes', function () {
+    let enc = EncryptedAttributes(['secret.data'], this.options)
+    let obj = {id: 1}
+    enc.encryptAll(obj)
+    expect(obj.secret, 'to be undefined')
+  })
+
   it('should not encrypt null', function () {
     let enc = EncryptedAttributes(['secret'], this.options)
     let obj = {id: 1}
@@ -97,6 +104,13 @@ describe('encrypted attributes', function () {
     enc.decryptAll(obj)
     expect(obj.secret.data, 'to equal', 'value')
     expect(obj.secret.dataLength, 'to equal', 5)
+  })
+
+  it('should not create missing nested attributes', function () {
+    let enc = EncryptedAttributes(['secret.data'], this.options)
+    let obj = {id: 1}
+    enc.decryptAll(obj)
+    expect(obj.secret, 'to be undefined')
   })
 
   it('should not decrypt null', function () {
