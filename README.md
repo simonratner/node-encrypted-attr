@@ -107,7 +107,7 @@ async function storeSomeSecrets (doc) {
     }
   }).save()
 
-  console.log(await Model.get(1))
+  console.log(await Model.get(doc.id))
   // {
   //   id: '543bed92-e241-4151-9d8f-1aa942c36d24',
   //   nested: {
@@ -117,7 +117,7 @@ async function storeSomeSecrets (doc) {
   //   secret: 'red'
   // }
 
-  console.log(await Model.get(1).execute())
+  console.log(await Model.get(doc.id).execute())
   // {
   //   id: '543bed92-e241-4151-9d8f-1aa942c36d24',
   //   nested: {
