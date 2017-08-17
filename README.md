@@ -13,7 +13,7 @@ Encrypted model attributes in your favourite ORM.
     * 128-bit authentication tag
 * Additional authenticated data:
     * Key id: use different keys for different attributes (or different users),
-      rotate keys over time without re-encrypting all data
+      rotate keys over time without re-encrypting
     * Object id: prevent substitution of encrypted values
 
 All keys should be 32 bytes long, and cryptographically random. Manage these
@@ -28,10 +28,10 @@ node -p "require('crypto').randomBytes(32).toString('base64')"
 This is designed to protect you from leaking sensitive user data under very
 specific scenarios:
 
-* Full database dump
+* Full data dump
     * Misplaced unencrypted backups
     * Compromised database host
-* Partial database dump
+* Partial data dump
     * Query injection via unsanitized input
 
 Specifically, this does *not* provide any protection in cases of a compromised
@@ -60,7 +60,7 @@ const _ = require('lodash')
 
 let Model = thinky.createModel('Model', {})
 
-Model.encryptedAttributes = EncryptedAttributes(['secret', 'nested.secret'], {
+let encryptedAttributes = EncryptedAttributes(['secret', 'nested.secret'], {
   keys: {
     k1: crypto.randomBytes(32).toString('base64') // use an actual key here
   },
@@ -69,40 +69,28 @@ Model.encryptedAttributes = EncryptedAttributes(['secret', 'nested.secret'], {
 })
 
 // Pre-save hook: encrypt model attributes that need to be encrypted.
-Model.pre('save', function (next) {
-  try {
-    Model.encryptedAttributes.encryptAll(this)
-    process.nextTick(next)
-  } catch (err) {
-    process.nextTick(next, err)
-  }
+Model.docOn('saving', function (doc) {
+  encryptedAttributes.encryptAll(doc)
 })
 
 // Post-save hook: decrypt model attributes that need to be decrypted.
-Model.post('save', function (next) {
-  try {
-    Model.encryptedAttributes.decryptAll(this)
-    process.nextTick(next)
-  } catch (err) {
-    process.nextTick(next, err)
-  }
+Model.docOn('saved', function (doc) {
+  encryptedAttributes.decryptAll(doc)
 })
 
 // Post-retrieve hook: ditto.
-Model.post('retrieve', function (next) {
-  try {
-    Model.encryptedAttributes.decryptAll(this)
-    process.nextTick(next)
-  } catch (err) {
-    process.nextTick(next, err)
-  }
+Model.on('retrieved', function (doc) {
+  encryptedAttributes.decryptAll(doc)
 })
 
 // Optionally, add some helpers in case we need to set or read the value
 // directly (such as an update query), without going through model hooks.
-for (let attr of Model.encryptedAttributes.attributes) {
-  Model.define(_.camelCase(`encrypted ${attr}`), function (val) {
-    return Model.encryptedAttributes.encryptAttribute(this, val)
+for (let attr of encryptedAttributes.attributes) {
+  Model.define(_.camelCase(`encrypt ${attr}`), function (val) {
+    return encryptedAttributes.encryptAttribute(this, val)
+  })
+  Model.define(_.camelCase(`decrypt ${attr}`), function (val) {
+    return encryptedAttributes.decryptAttribute(this, val)
   })
 }
 ```
