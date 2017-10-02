@@ -15,8 +15,7 @@
     "orm"
   ],
   "dependencies": {
-    "lodash": "^4.17.4",
-    "node-aes-gcm": "^0.2.2"
+    "lodash": "^4.17.4"
   },
   "optionalDependencies": {},
   "devDependencies": {

@@ -158,7 +158,7 @@ describe('encrypted attributes', function () {
     let obj = {id: 1}
     // aad: aes-256-gcm$01$k2
     let wrongKey = 'YWVzLTI1Ni1nY20kMSRrMg==$sK91YfUvv+O8Jx/m$OOQniq8=$WLbWYz7uCQBTNO3Fc+5UvA'
-    expect(() => enc.decryptAttribute(obj, wrongKey), 'to throw', /invalid auth tag/i)
+    expect(() => enc.decryptAttribute(obj, wrongKey), 'to throw', /unable to auth/i)
   })
 
   it('should throw when decrypting with wrong auth tag', function () {
@@ -166,7 +166,7 @@ describe('encrypted attributes', function () {
     let obj = {id: 1}
     // aad: aes-256-gcm$01$k1
     let wrongAuthTag = 'YWVzLTI1Ni1nY20kMSRrMQ==$sK91YfUvv+O8Jx/m$OOQniq8=$VLbWYz7uCQBTNO3Fc+5UvA'
-    expect(() => enc.decryptAttribute(obj, wrongAuthTag), 'to throw', /invalid auth tag/i)
+    expect(() => enc.decryptAttribute(obj, wrongAuthTag), 'to throw', /unable to auth/i)
   })
 
   it('should throw when decrypting without id', function () {
