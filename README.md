@@ -13,15 +13,21 @@ Encrypted model attributes in your favourite ORM.
     * 128-bit authentication tag
 * Additional authenticated data:
     * Key id: use different keys for different attributes (or different users),
-      rotate keys over time without re-encrypting
+      rotate keys for new data over time without re-encrypting old data
     * Object id: prevent substitution of encrypted values
 
 All keys should be 32 bytes long, and cryptographically random. Manage these
-keys as you would any other credentials (environment config, keychain, vault).
-Generate keys with:
+keys as you would any other sensitive credentials (environment config, vault,
+keychain). You can generate random keys with this snippet:
 ```
 node -p "require('crypto').randomBytes(32).toString('base64')"
 ```
+
+Refer to [NIST Special Publication 800-38D](http://doi.org/10.6028/NIST.SP.800-38D)
+for additional recommendations. In particular, you should pay attention to
+uniqueness requirements for keys and IVs, and constraints on the number of
+invocations with a given key (Section 8). These should inform key rotation
+policies.
 
 # Threat model
 
