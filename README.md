@@ -49,7 +49,7 @@ npm install encrypted-attr
 
 While this module can be used stand-alone to encrypt individual values (see
 [tests](/test/encrypted-attr.spec.js)), it is designed to be wrapped into a
-plugin or hook for your favourite ORM. Eventually, this package may include
+plugin or hook for your favourite ORM.  Eventually, this package may include
 such plugins for common ORMs, but for now, here's an example of integrating
 with [thinky](https://github.com/neumino/thinky):
 
@@ -128,6 +128,82 @@ async function storeSomeSecrets (doc) {
   // }
 }
 ```
+
+
+### Standalone usage
+
+
+After requiring and invoking this module as shown above, you'll be able to call any of several available methods on the hydrated "encryptedAttributes" object.  Those methods are documented below.
+
+> Alternatively, you can simply chain:
+> 
+> ```js
+> const EncryptedAttributes = require('encrypted-attr');
+>
+> var rawSocialSecurityNumber = '555-55-5555';
+> 
+> var encryptedSSN = EncryptedAttributes(['ssn'], {
+>   keyId: 'default',
+>   keys: { default: 'keyboardcat' }
+> })
+> .encryptAttribute(undefined, '555-55-5555');
+> ```
+
+
+##### encryptAttribute()
+
+Encrypt a string using one of your keys (specifically, the key indicated by the configured `keyId`).
+
+```js
+var encryptedString = ea.encryptAttribute(optionalSourceObj, rawString);
+```
+
+> `optionalSourceObj` is only relevant if the `verifyId` option is enabled. If you don't have that option enabled, you can simply pass in `undefined`.
+
+##### decryptAttribute()
+
+Decrypt a value. 
+
+```js
+var rawString = ea.encryptAttribute(optionalSourceObj, encryptedString)
+```
+
+> `optionalSourceObj` is only relevant if the `verifyId` option is enabled.  If you don't have that option enabled, you can simply pass in `undefined`.
+
+
+##### encryptAll()
+
+Encrypt a subset of the provided dictionary (i.e. plain JavaScript object) of raw, unencrypted values.
+
+```js
+var partiallyEncryptedObj = ea.encryptAll(rawObj)
+```
+
+> Only fields identified in the array of keypaths you passed in during initial setup of this module will actually be encrypted.
+
+
+##### decryptAll()
+
+Decrypt a subset of the provided dictionary of encrypted values.
+
+```js
+var rawObj = ea.decryptAll(partiallyEncryptedObj)
+```
+
+> Only fields identified in the array of keypaths you passed in during initial setup of this module will actually be decrypted.
+
+
+
+
+# Options
+
+| Option     | Type           | Required?      | Details                                                              |
+|:-----------|----------------|:---------------|:---------------------------------------------------------------------|
+| keyId      | ((string ))    | Required(ish)  | The id of the key to use for all **new encryptions**.  This is _not_ necessarily the only key that will be used for decryptions though, because the key id you choose gets embedded into the encrypted string itself.  Then before that string is decrypted, this module simply unpacks that key id and uses it to determine the appropriate decryption key.  This approach allows for using multiple keys.  (Note that this option is only _technically_ required if you need to encrypt new data.  If you are only decrypting existing data, you needn't pass it in.) |
+| keys       | ((dictionary))   | Required     | A dictionary of all relevant data encryption keys (DEKs).  Since encrypted strings _contain the key id that was used to encrypt them_, it's important that `keys` contain the appropriate keys for any past key ids it might run across when attempting to decrypt those strings.
+| verifyId   | ((boolean))      | _Optional._  | Whether or not to (A) use the `id` property of a provided source object as an additional piece of metadata during encryption, and (B) expect that metadata to be embedded in encrypted strings during decryption, and throw an error if the expected idea does not match.  Defaults to `false`.
+
+
 
 # License
 
