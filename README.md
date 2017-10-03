@@ -49,7 +49,7 @@ npm install encrypted-attr
 
 While this module can be used stand-alone to encrypt individual values (see
 [tests](/test/encrypted-attr.spec.js)), it is designed to be wrapped into a
-plugin or hook for your favourite ORM.  Eventually, this package may include
+plugin or hook for your favourite ORM. Eventually, this package may include
 such plugins for common ORMs, but for now, here's an example of integrating
 with [thinky](https://github.com/neumino/thinky):
 
