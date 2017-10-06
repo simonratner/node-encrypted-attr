@@ -78,6 +78,18 @@ describe('encrypted attributes', function () {
     expect(() => enc.encryptAttribute(obj, 'value'), 'to throw', /cannot encrypt without 'id'/i)
   })
 
+  it('should throw when encrypting without id (custom field)', function () {
+    let enc = EncryptedAttributes(['secret'], Object.assign(this.options, {verifyId: '_id'}))
+    let obj = {}
+    expect(() => enc.encryptAttribute(obj, 'value'), 'to throw', /cannot encrypt without '_id'/i)
+  })
+
+  it('should encrypt with custom id field name', function () {
+    let enc = EncryptedAttributes(['secret'], Object.assign(this.options, {verifyId: '_id'}))
+    let obj = {_id: 1}
+    expect(() => enc.encryptAttribute(obj, 'value'), 'not to throw')
+  })
+
   it('should encrypt without id when verify id option is false', function () {
     let enc = EncryptedAttributes(['secret'], Object.assign(this.options, {verifyId: false}))
     let obj = {}
@@ -142,7 +154,15 @@ describe('encrypted attributes', function () {
     let obj = {id: 1}
     // aad: aes-256-gcm$02$k1
     let invalidId = 'YWVzLTI1Ni1nY20kMiRrMQ==$sK91YfUvv+O8Jx/m$OOQniq8=$WLbWYz7uCQBTNO3Fc+5UvA'
-    expect(() => enc.decryptAttribute(obj, invalidId), 'to throw', /invalid id/i)
+    expect(() => enc.decryptAttribute(obj, invalidId), 'to throw', /invalid 'id'/i)
+  })
+
+  it('should throw when decrypting with invalid id (custom field)', function () {
+    let enc = EncryptedAttributes(['secret'], Object.assign(this.options, {verifyId: '_id'}))
+    let obj = {_id: 1}
+    // aad: aes-256-gcm$02$k1
+    let invalidId = 'YWVzLTI1Ni1nY20kMiRrMQ==$sK91YfUvv+O8Jx/m$OOQniq8=$WLbWYz7uCQBTNO3Fc+5UvA'
+    expect(() => enc.decryptAttribute(obj, invalidId), 'to throw', /invalid '_id'/i)
   })
 
   it('should throw when decrypting with invalid key id', function () {
@@ -174,6 +194,20 @@ describe('encrypted attributes', function () {
     let obj = {}
     let encrypted = 'YWVzLTI1Ni1nY20kMSRrMQ==$sK91YfUvv+O8Jx/m$OOQniq8=$WLbWYz7uCQBTNO3Fc+5UvA'
     expect(() => enc.decryptAttribute(obj, encrypted), 'to throw', /cannot decrypt without 'id'/i)
+  })
+
+  it('should throw when decrypting without id (custom field)', function () {
+    let enc = EncryptedAttributes(['secret'], Object.assign(this.options, {verifyId: '_id'}))
+    let obj = {}
+    let encrypted = 'YWVzLTI1Ni1nY20kMSRrMQ==$sK91YfUvv+O8Jx/m$OOQniq8=$WLbWYz7uCQBTNO3Fc+5UvA'
+    expect(() => enc.decryptAttribute(obj, encrypted), 'to throw', /cannot decrypt without '_id'/i)
+  })
+
+  it('should decrypt with custom id field name', function () {
+    let enc = EncryptedAttributes(['secret'], Object.assign(this.options, {verifyId: '_id'}))
+    let obj = {_id: 1}
+    let encrypted = 'YWVzLTI1Ni1nY20kMSRrMQ==$sK91YfUvv+O8Jx/m$OOQniq8=$WLbWYz7uCQBTNO3Fc+5UvA'
+    expect(() => enc.decryptAttribute(obj, encrypted), 'not to throw')
   })
 
   it('should decrypt without id when verify id option is false', function () {
