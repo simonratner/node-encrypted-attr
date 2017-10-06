@@ -23,7 +23,6 @@
     "babel-core": "^6.26.0",
     "babel-preset-env": "^1.6.0",
     "babel-register": "^6.26.0",
-    "eslint": "^3.19.0",
     "mocha": "^3.5.0",
     "mocha-standard": "^1.0.0",
     "standard": "^10.0.3",
@@ -32,7 +31,6 @@
   "scripts": {
     "compile": "babel --presets env -d lib/ src/",
     "prepublish": "npm run compile",
-    "lint": "eslint . --max-warnings=0",
     "test": "npm run compile && mocha --compilers js:babel-core/register -R spec --recursive"
   },
   "homepage": "https://github.com/simonratner/node-encrypted-attr",
