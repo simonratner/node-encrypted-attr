@@ -47,6 +47,8 @@ sanitizing your input, et cetera.
 
 # Install
 
+This module requires at least node v4.0.
+
 ```
 npm install encrypted-attr
 ```
@@ -89,8 +91,13 @@ These options are supported:
 | :----------- | :--------------- | :--------- | :----------------------------                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | `keys`       | dictionary       | Required   | Dictionary of all relevant data encryption keys, as `base64` strings.  Since encrypted strings _embed the key id that was used to encrypt them_, it's important that `keys` contains the appropriate key for any previously encrypted data you might run across.                                                                                                                                                                                                                                                                                           |
 | `keyId`      | string           | Required   | The id of the key to use for all _new encryptions_.  This is not necessarily the only key that will be used for decryptions, because the key id gets embedded into the encrypted string.  When that string is decrypted, this module unpacks that key id and uses it to determine the appropriate decryption key.  This approach allows multiple keys to be used for the same attribute.  (Note that this option is only _technically_ required if you need to encrypt new data. If you are only decrypting existing data, you do not need to provide it.) |
-| `verifyId`   | boolean          | _Optional_ | Whether or not to (a) use the `id` property of a provided source object as an additional piece of metadata during encryption, and (b) expect that metadata to be embedded in encrypted strings during decryption, and throw an error if the expected id does not match the source object.  Defaults to `false`.                                                                                                                                                                                                                                            |
+| `verifyId`   | string           | _Optional_ | The property name to use as the primary id for objects. If not set, object id will not be included during encryption, nor verified during decryption. If set to a truthy value that isn't a string, `"id"` will be used instead.                                                                                                                                                                                                                                                                                                                           |
 
+If the `verifyId` option is specified, the value of that property on the source
+object passed during encryption will be included as part of the authenticated
+metadata; during decryption, this value is expected to match the value of the
+same property on the object passed during decryption, otherwise an exception
+is thrown.
 
 ### encryptAttribute(sourceObject, plaintextString)
 
@@ -169,7 +176,7 @@ let encryptedAttributes = EncryptedAttributes(['secret', 'nested.secret'], {
     k1: crypto.randomBytes(32).toString('base64') // use an actual key here
   },
   keyId: 'k1',
-  verifyId: true
+  verifyId: 'id'
 })
 
 // Pre-save hook: encrypt model attributes that need to be encrypted.
