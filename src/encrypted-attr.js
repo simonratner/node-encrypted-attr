@@ -12,7 +12,7 @@ function EncryptedAttributes (attributes, options) {
   function encryptAttribute (obj, val) {
     // Encrypted attributes are prefixed with "aes-256-gcm$", the base64
     // encoding of which is in `prefix`. Nulls are not encrypted.
-    if (val == null || (typeof val === 'string' && val.startsWith(prefix))) {
+    if (val == null || (typeof val === 'string' && val.startsWith(prefix))) { // eslint-disable-line eqeqeq
       return val
     }
     if (typeof val !== 'string') {
@@ -26,7 +26,8 @@ function EncryptedAttributes (attributes, options) {
     let aad = Buffer.from(
       `aes-256-gcm$${options.verifyId ? obj.id.toString() : ''}$${options.keyId}`)
     let key = Buffer.from(options.keys[options.keyId], 'base64')
-    let gcm = crypto.createCipheriv('aes-256-gcm', key, iv).setAAD(aad)
+    let gcm = crypto.createCipheriv('aes-256-gcm', key, iv)
+    gcm.setAAD(aad)
     let result = gcm.update(val, 'utf8', 'base64') + gcm.final('base64')
 
     return aad.toString('base64') + '$' +
@@ -38,7 +39,7 @@ function EncryptedAttributes (attributes, options) {
   function encryptAll (obj) {
     for (let attr of attributes) {
       let val = get(obj, attr)
-      if (val != null) {
+      if (val != null) { // eslint-disable-line eqeqeq
         set(obj, attr, encryptAttribute(obj, val))
       }
     }
@@ -63,7 +64,9 @@ function EncryptedAttributes (attributes, options) {
       throw new Error('Encrypted attribute has invalid key id')
     }
     let key = Buffer.from(options.keys[keyId], 'base64')
-    let gcm = crypto.createDecipheriv('aes-256-gcm', key, iv).setAAD(aad).setAuthTag(tag)
+    let gcm = crypto.createDecipheriv('aes-256-gcm', key, iv)
+    gcm.setAAD(aad)
+    gcm.setAuthTag(tag)
 
     return gcm.update(payload, 'binary', 'utf8') + gcm.final('utf8')
   }
@@ -71,7 +74,7 @@ function EncryptedAttributes (attributes, options) {
   function decryptAll (obj) {
     for (let attr of attributes) {
       let val = get(obj, attr)
-      if (val != null) {
+      if (val != null) { // eslint-disable-line eqeqeq
         set(obj, attr, decryptAttribute(obj, val))
       }
     }
